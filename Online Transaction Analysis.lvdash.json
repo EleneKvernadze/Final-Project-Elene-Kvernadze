@@ -1,0 +1,2319 @@
+{
+  "datasets": [
+    {
+      "name": "55394b7e",
+      "displayName": "Card Transactions Merchant Records Dataset",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM getdata.default.card_transactions__merchants;"
+      ],
+      "catalog": "workspace",
+      "schema": "default"
+    },
+    {
+      "name": "2efec16e",
+      "displayName": "Card Type Information Dataset",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM getdata.default.card_types;"
+      ]
+    },
+    {
+      "name": "19f68f40",
+      "displayName": "Customer Insights Archive",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM getdata.default.customer_profiles;"
+      ]
+    },
+    {
+      "name": "18244b17",
+      "displayName": "Merchant Insights Overview",
+      "queryLines": [
+        "SELECT *\n",
+        "FROM getdata.default.merchants"
+      ]
+    }
+  ],
+  "relationshipGraphs": [
+    {
+      "sources": [
+        {
+          "name": "Card_Transactions_Merchant_Records_Dataset",
+          "datasetName": "55394b7e"
+        },
+        {
+          "name": "Card_Type_Information_Dataset",
+          "datasetName": "2efec16e"
+        },
+        {
+          "name": "Customer_Insights_Archive",
+          "datasetName": "19f68f40"
+        },
+        {
+          "name": "Merchant_Insights_Overview",
+          "datasetName": "18244b17"
+        }
+      ],
+      "relationships": [
+        {
+          "name": "Merchant_Insights_Overview_Card_Transactions_Merchant_Records_Dataset",
+          "from": "Merchant_Insights_Overview",
+          "to": "Card_Transactions_Merchant_Records_Dataset",
+          "on": "`Merchant_Insights_Overview`.`Merchant_id` = `Card_Transactions_Merchant_Records_Dataset`.`Merchant`",
+          "cardinality": "CARDINALITY_ONE_TO_MANY"
+        },
+        {
+          "name": "Customer_Insights_Archive_Card_Transactions_Merchant_Records_Dataset",
+          "from": "Customer_Insights_Archive",
+          "to": "Card_Transactions_Merchant_Records_Dataset",
+          "on": "`Customer_Insights_Archive`.`Customer_ID` = `Card_Transactions_Merchant_Records_Dataset`.`Customer_ID`",
+          "cardinality": "CARDINALITY_ONE_TO_MANY"
+        },
+        {
+          "name": "Card_Type_Information_Dataset_Card_Transactions_Merchant_Records_Dataset",
+          "from": "Card_Type_Information_Dataset",
+          "to": "Card_Transactions_Merchant_Records_Dataset",
+          "on": "`Card_Type_Information_Dataset`.`Card_Type_Id` = `Card_Transactions_Merchant_Records_Dataset`.`Card_Type`",
+          "cardinality": "CARDINALITY_ONE_TO_MANY"
+        }
+      ],
+      "measureExpressions": [
+        {
+          "name": "total_revenue",
+          "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+        },
+        {
+          "name": "total_transactions",
+          "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+        },
+        {
+          "name": "avg_transaction_amount",
+          "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`) / COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+        },
+        {
+          "name": "unique_customers",
+          "expression": "COUNT(DISTINCT `Card_Transactions_Merchant_Records_Dataset`.`Customer_ID`)"
+        },
+        {
+          "name": "unique_merchants",
+          "expression": "COUNT(DISTINCT `Card_Transactions_Merchant_Records_Dataset`.`Merchant`)"
+        },
+        {
+          "name": "revenue_per_customer",
+          "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`) / COUNT(DISTINCT `Customer_Insights_Archive`.`Customer_ID`)"
+        },
+        {
+          "name": "revenue_per_merchant",
+          "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`) / COUNT(DISTINCT `Merchant_Insights_Overview`.`Merchant_id`)"
+        },
+        {
+          "name": "transactions_per_customer",
+          "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`) / COUNT(DISTINCT `Customer_Insights_Archive`.`Customer_ID`)"
+        },
+        {
+          "name": "success_rate",
+          "expression": "COUNT_IF(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Status` = 'Completed') * 100.0 / COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+        },
+        {
+          "name": "avg_customer_age",
+          "expression": "AVG(`Customer_Insights_Archive`.`Age`)"
+        },
+        {
+          "name": "avg_customer_tenure",
+          "expression": "AVG(`Customer_Insights_Archive`.`Customer_Tenure`)"
+        }
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "b39d9631",
+      "displayName": "Card Transaction Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "total_transactions",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                      "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total Transactions",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total_revenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total Transaction Volume (USD)",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "avg_transaction",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "avg(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "AVG(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Average Transaction Size",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 4,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "unique_customers",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "countdistinct(Card_Transactions_Merchant_Records_Dataset__Customer_ID)",
+                      "expression": "COUNT(DISTINCT `Card_Transactions_Merchant_Records_Dataset`.`Customer_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Active Customers",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(Card_Transactions_Merchant_Records_Dataset__Customer_ID)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "unique_merchants",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "countdistinct(Card_Transactions_Merchant_Records_Dataset__Merchant)",
+                      "expression": "COUNT(DISTINCT `Card_Transactions_Merchant_Records_Dataset`.`Merchant`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Active Merchants",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(Card_Transactions_Merchant_Records_Dataset__Merchant)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 8,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "success_rate",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                      "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Success Rate",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 10,
+            "y": 2,
+            "width": 2,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "transactions_trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "monthly(Card_Transactions_Merchant_Records_Dataset__Transaction_Date)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `Card_Transactions_Merchant_Records_Dataset`.`Transaction_Date`)"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transactions by Month",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(Card_Transactions_Merchant_Records_Dataset__Transaction_Date)",
+                  "displayName": "Month",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "displayName": "Transaction_Amount_USD",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "status_breakdown",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                      "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+                    },
+                    {
+                      "name": "Card_Transactions_Merchant_Records_Dataset__Transaction_Status",
+                      "expression": "`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Status`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transaction Status Breakdown",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Transaction_ID"
+                },
+                "color": {
+                  "fieldName": "Card_Transactions_Merchant_Records_Dataset__Transaction_Status",
+                  "displayName": "Transaction_Status",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 4,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "top_merchants",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Merchant_Insights_Overview__Merchant_Name",
+                      "expression": "`Merchant_Insights_Overview`.`Merchant_Name`"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Top 10 Merchants by Volume",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Merchant_Insights_Overview__Merchant_Name",
+                  "displayName": "Merchant_Name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "displayName": "Transaction_Amount_USD",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Merchant_Insights_Overview__Merchant_Name",
+                  "displayName": "Merchant_Name",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "customer_segment",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Segment",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Segment`"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transactions by Customer Segment",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "displayName": "Transaction_Amount_USD",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "card_type",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Card_Type_Information_Dataset__Card_Type",
+                      "expression": "`Card_Type_Information_Dataset`.`Card_Type`"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transactions by Card Type",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Card_Type_Information_Dataset__Card_Type",
+                  "displayName": "Card_Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "displayName": "Transaction_Amount_USD",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Card_Type_Information_Dataset__Card_Type",
+                  "displayName": "Card_Type",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "loyalty_dist",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(`Customer_Insights_Archive`.`Customer_ID`)"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Loyalty_Status",
+                      "expression": "`Customer_Insights_Archive`.`Loyalty_Status`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Loyalty Distribution",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(Customer_Insights_Archive__Customer_ID)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Customer_ID"
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Loyalty_Status",
+                  "displayName": "Loyalty_Status",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 13,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "merchant_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Merchant_Insights_Overview__Merchant_Name",
+                      "expression": "`Merchant_Insights_Overview`.`Merchant_Name`"
+                    },
+                    {
+                      "name": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                      "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    },
+                    {
+                      "name": "avg(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "AVG(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    },
+                    {
+                      "name": "countdistinct(Card_Transactions_Merchant_Records_Dataset__Customer_ID)",
+                      "expression": "COUNT(DISTINCT `Card_Transactions_Merchant_Records_Dataset`.`Customer_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Merchant Performance Details",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Merchant_Insights_Overview__Merchant_Name"
+                  },
+                  {
+                    "fieldName": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)"
+                  },
+                  {
+                    "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)"
+                  },
+                  {
+                    "fieldName": "avg(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)"
+                  },
+                  {
+                    "fieldName": "countdistinct(Card_Transactions_Merchant_Records_Dataset__Customer_ID)"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 17,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "segment_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Segment",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Segment`"
+                    },
+                    {
+                      "name": "countdistinct(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(DISTINCT `Customer_Insights_Archive`.`Customer_ID`)"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    },
+                    {
+                      "name": "avg(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "AVG(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    },
+                    {
+                      "name": "avg(Customer_Insights_Archive__Monthly_Number_of_Logins_in_Mobile_Bank)",
+                      "expression": "AVG(`Customer_Insights_Archive`.`Monthly_Number_of_Logins_in_Mobile_Bank`)"
+                    },
+                    {
+                      "name": "avg(Customer_Insights_Archive__Customer_Tenure)",
+                      "expression": "AVG(`Customer_Insights_Archive`.`Customer_Tenure`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Segment Insights",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Customer_Insights_Archive__Customer_Segment"
+                  },
+                  {
+                    "fieldName": "countdistinct(Customer_Insights_Archive__Customer_ID)"
+                  },
+                  {
+                    "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)"
+                  },
+                  {
+                    "fieldName": "avg(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)"
+                  },
+                  {
+                    "fieldName": "avg(Customer_Insights_Archive__Monthly_Number_of_Logins_in_Mobile_Bank)"
+                  },
+                  {
+                    "fieldName": "avg(Customer_Insights_Archive__Customer_Tenure)"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 22,
+            "width": 12,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "income_band",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Income_Band",
+                      "expression": "`Customer_Insights_Archive`.`Income_Band`"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transactions by Income Band",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Income_Band",
+                  "displayName": "Income_Band",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "displayName": "Transaction_Amount_USD",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Income_Band",
+                  "displayName": "Income_Band",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 27,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "age_segment",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Segment",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Segment`"
+                    },
+                    {
+                      "name": "avg(Customer_Insights_Archive__Age)",
+                      "expression": "AVG(`Customer_Insights_Archive`.`Age`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Average Age by Customer Segment",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "avg(Customer_Insights_Archive__Age)",
+                  "displayName": "Age",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 27,
+            "width": 6,
+            "height": 4
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_date_range",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Date",
+                "query": {
+                  "datasetName": "55394b7e",
+                  "fields": [
+                    {
+                      "name": "Transaction_Date",
+                      "expression": "`Transaction_Date`"
+                    },
+                    {
+                      "name": "Transaction_Date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transaction Date Range",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Transaction_Date",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_status",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Status",
+                "query": {
+                  "datasetName": "55394b7e",
+                  "fields": [
+                    {
+                      "name": "Transaction_Status",
+                      "expression": "`Transaction_Status`"
+                    },
+                    {
+                      "name": "Transaction_Status_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transaction Status",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Transaction_Status",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Status"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_card_type",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1e57a18bebf861f21be448e05_Card_Type",
+                "query": {
+                  "datasetName": "2efec16e",
+                  "fields": [
+                    {
+                      "name": "Card_Type",
+                      "expression": "`Card_Type`"
+                    },
+                    {
+                      "name": "Card_Type_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Card Type",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Card_Type",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1e57a18bebf861f21be448e05_Card_Type"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_segment",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1f36d169184818d0411f41c08_Customer_Segment",
+                "query": {
+                  "datasetName": "19f68f40",
+                  "fields": [
+                    {
+                      "name": "Customer_Segment",
+                      "expression": "`Customer_Segment`"
+                    },
+                    {
+                      "name": "Customer_Segment_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Segment",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Customer_Segment",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1f36d169184818d0411f41c08_Customer_Segment"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    },
+    {
+      "name": "customer_analysis",
+      "displayName": "Customer Analysis",
+      "layout": [
+        {
+          "widget": {
+            "name": "avg_age_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "avg(Customer_Insights_Archive__Age)",
+                      "expression": "AVG(`Customer_Insights_Archive`.`Age`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Average Customer Age",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Customer_Insights_Archive__Age)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "avg_tenure_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "avg(Customer_Insights_Archive__Customer_Tenure)",
+                      "expression": "AVG(`Customer_Insights_Archive`.`Customer_Tenure`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Average Customer Tenure",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Customer_Insights_Archive__Customer_Tenure)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 5,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "total_customers_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "countdistinct(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(DISTINCT `Customer_Insights_Archive`.`Customer_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total Customers",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "countdistinct(Customer_Insights_Archive__Customer_ID)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 5,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "avg_logins_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "avg(Customer_Insights_Archive__Monthly_Number_of_Logins_in_Mobile_Bank)",
+                      "expression": "AVG(`Customer_Insights_Archive`.`Monthly_Number_of_Logins_in_Mobile_Bank`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Avg Monthly Logins",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "avg(Customer_Insights_Archive__Monthly_Number_of_Logins_in_Mobile_Bank)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 5,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "customers_by_segment",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Segment",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Segment`"
+                    },
+                    {
+                      "name": "count(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(`Customer_Insights_Archive`.`Customer_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customers by Segment",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(Customer_Insights_Archive__Customer_ID)",
+                  "displayName": "Customer_ID",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "customers_by_income",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(`Customer_Insights_Archive`.`Customer_ID`)"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Income_Band",
+                      "expression": "`Customer_Insights_Archive`.`Income_Band`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customers by Income Band",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(Customer_Insights_Archive__Customer_ID)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Customer_ID"
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Income_Band",
+                  "displayName": "Income_Band",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "loyalty_status",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "count(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(`Customer_Insights_Archive`.`Customer_ID`)"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Loyalty_Status",
+                      "expression": "`Customer_Insights_Archive`.`Loyalty_Status`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Loyalty Status",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "pie",
+              "encodings": {
+                "angle": {
+                  "fieldName": "count(Customer_Insights_Archive__Customer_ID)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "displayName": "Customer_ID"
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Loyalty_Status",
+                  "displayName": "Loyalty_Status",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 14,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "referral_sources",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Referral_Source",
+                      "expression": "`Customer_Insights_Archive`.`Referral_Source`"
+                    },
+                    {
+                      "name": "count(Customer_Insights_Archive__Customer_ID)",
+                      "expression": "COUNT(`Customer_Insights_Archive`.`Customer_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Acquisition Sources",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Referral_Source",
+                  "displayName": "Referral_Source",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(Customer_Insights_Archive__Customer_ID)",
+                  "displayName": "Customer_ID",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Referral_Source",
+                  "displayName": "Referral_Source",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 14,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue_by_segment",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Segment",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Segment`"
+                    },
+                    {
+                      "name": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                      "expression": "SUM(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_Amount_USD`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Revenue by Customer Segment",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(Card_Transactions_Merchant_Records_Dataset__Transaction_Amount_USD)",
+                  "displayName": "Transaction_Amount_USD",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Customer_Segment",
+                  "displayName": "Customer_Segment",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 20,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "txn_by_loyalty",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Loyalty_Status",
+                      "expression": "`Customer_Insights_Archive`.`Loyalty_Status`"
+                    },
+                    {
+                      "name": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                      "expression": "COUNT(`Card_Transactions_Merchant_Records_Dataset`.`Transaction_ID`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transactions by Loyalty Status",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "Customer_Insights_Archive__Loyalty_Status",
+                  "displayName": "Loyalty_Status",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "count(Card_Transactions_Merchant_Records_Dataset__Transaction_ID)",
+                  "displayName": "Transaction_ID",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "Customer_Insights_Archive__Loyalty_Status",
+                  "displayName": "Loyalty_Status",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 20,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "customer_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "Customer_Insights_Archive__Customer_ID",
+                      "expression": "`Customer_Insights_Archive`.`Customer_ID`"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Age",
+                      "expression": "`Customer_Insights_Archive`.`Age`"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Income_Band",
+                      "expression": "`Customer_Insights_Archive`.`Income_Band`"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Segment",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Segment`"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Loyalty_Status",
+                      "expression": "`Customer_Insights_Archive`.`Loyalty_Status`"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Customer_Tenure",
+                      "expression": "`Customer_Insights_Archive`.`Customer_Tenure`"
+                    },
+                    {
+                      "name": "Customer_Insights_Archive__Referral_Source",
+                      "expression": "`Customer_Insights_Archive`.`Referral_Source`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Profile Details",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "Customer_Insights_Archive__Customer_ID"
+                  },
+                  {
+                    "fieldName": "Customer_Insights_Archive__Age"
+                  },
+                  {
+                    "fieldName": "Customer_Insights_Archive__Income_Band"
+                  },
+                  {
+                    "fieldName": "Customer_Insights_Archive__Customer_Segment"
+                  },
+                  {
+                    "fieldName": "Customer_Insights_Archive__Loyalty_Status"
+                  },
+                  {
+                    "fieldName": "Customer_Insights_Archive__Customer_Tenure"
+                  },
+                  {
+                    "fieldName": "Customer_Insights_Archive__Referral_Source"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 26,
+            "width": 12,
+            "height": 8
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_date_range",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Date",
+                "query": {
+                  "datasetName": "55394b7e",
+                  "fields": [
+                    {
+                      "name": "Transaction_Date",
+                      "expression": "`Transaction_Date`"
+                    },
+                    {
+                      "name": "Transaction_Date_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transaction Date Range",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Transaction_Date",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Date"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_status",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Status",
+                "query": {
+                  "datasetName": "55394b7e",
+                  "fields": [
+                    {
+                      "name": "Transaction_Status",
+                      "expression": "`Transaction_Status`"
+                    },
+                    {
+                      "name": "Transaction_Status_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Transaction Status",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Transaction_Status",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1c10b16c7a8d29c8463a5cb33_Transaction_Status"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_card_type",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1e57a18bebf861f21be448e05_Card_Type",
+                "query": {
+                  "datasetName": "2efec16e",
+                  "fields": [
+                    {
+                      "name": "Card_Type",
+                      "expression": "`Card_Type`"
+                    },
+                    {
+                      "name": "Card_Type_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Card Type",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Card_Type",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1e57a18bebf861f21be448e05_Card_Type"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "filter_segment",
+            "queries": [
+              {
+                "name": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1f36d169184818d0411f41c08_Customer_Segment",
+                "query": {
+                  "datasetName": "19f68f40",
+                  "fields": [
+                    {
+                      "name": "Customer_Segment",
+                      "expression": "`Customer_Segment`"
+                    },
+                    {
+                      "name": "Customer_Segment_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Customer Segment",
+                  "fields": []
+                }
+              },
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "Customer_Segment",
+                    "queryName": "dashboards/01f1abd1be061700929c67fb54d32c0a/datasets/01f1abd1f36d169184818d0411f41c08_Customer_Segment"
+                  }
+                ]
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "total_revenue",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(total_revenue)",
+                      "expression": "MEASURE(`total_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total Transaction Revenue",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(total_revenue)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 2,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "avg_txn_amount",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(avg_transaction_amount)",
+                      "expression": "MEASURE(`avg_transaction_amount`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Avg Transaction Amount",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(avg_transaction_amount)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 2,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "total_transactions",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(total_transactions)",
+                      "expression": "MEASURE(`total_transactions`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Total Transactions",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(total_transactions)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 2,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue_per_customer",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "fields": [
+                    {
+                      "name": "measure(revenue_per_customer)",
+                      "expression": "MEASURE(`revenue_per_customer`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "Revenue per Customer",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(revenue_per_customer)",
+                  "rowNumber": 0
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 2,
+            "width": 3,
+            "height": 3
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "visualizationColors": [
+        "#FFB3BA",
+        "#FFDFBA",
+        "#FFFFBA",
+        "#BAFFC9",
+        "#BAE1FF",
+        "#D5AAFF",
+        "#FFD1DC",
+        "#E0BBE4",
+        "#FFDFD3",
+        "#C1F0C8"
+      ],
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
